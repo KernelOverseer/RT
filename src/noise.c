@@ -120,11 +120,9 @@ static double	ft_cubic_interpolation(t_vector left_side,
 
 static double	ft_noise_3(t_vector point)
 {
-	int			i;
 	t_vector	right_side;
 	t_vector	left_side;
 
-	i = -1;
 	right_side.x = (int)(point.x) % 256;
 	right_side.y = (int)(point.y) % 256;
 	right_side.z = (int)(point.z) % 256;

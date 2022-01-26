@@ -11,7 +11,10 @@
 /* ************************************************************************** */
 
 #include "rtv1.h"
-#include <sys/time.h>
+#include<sys/time.h>
+
+typedef u_int16_t uint16_t;
+typedef u_int32_t uint32_t;
 
 int		ft_write_header(int fd, t_img *image)
 {

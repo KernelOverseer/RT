@@ -43,15 +43,12 @@ static int		ft_intersect_reflected(t_rtv *rtv)
 
 t_color			ft_reflect_ray(t_rtv rtv, int depth)
 {
-	double	reflection;
-
 	if (!rtv.scene.reflection_depth || depth > rtv.scene.reflection_depth
 		|| !rtv.options.reflection)
 		return ((t_color){0, 0, 0});
 	rtv.cam.ray_origin = rtv.cam.hit.position;
 	rtv.cam.ray_direction = ft_reflected_ray(rtv.cam.hit.normal,
 		rtv.cam.ray_direction);
-	reflection = rtv.cam.hit.reflection;
 	if (ft_intersect_reflected(&rtv))
 		return (ft_get_node_color(rtv, depth + 1));
 	return ((t_color){0, 0, 0});

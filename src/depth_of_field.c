@@ -30,15 +30,12 @@ void					ft_depth_of_field(t_rtv *rtv)
 {
 	t_vector			world_point;
 	t_vector			random;
-	t_vector			offset;
 	t_vector			focus;
 	double				radius;
 
 	random = ft_new_vector(rand() / (float)(RAND_MAX),
 			rand() / (float)(RAND_MAX), 0);
 	radius = 0.5;
-	offset = ft_add_vector(ft_scale_vector(rtv->cam.right, random.x),
-			ft_scale_vector(rtv->cam.up, random.y));
 	world_point = ft_add_vector(rtv->cam.bottom_left,
 			ft_add_vector(ft_scale_vector(rtv->cam.h_scalar,
 					(rtv->column + 0.5) / rtv->scene.height),
