@@ -1,9 +1,13 @@
 # RayTracer (RT)
+
+![a 3d object made of polygons, in a box of mirrors](https://i.ibb.co/Qcsk2Mm/ezgif-com-optimize-1.gif "a 3d object made of polygons, in a box of mirrors")
+
 A raytracing program built from scratch in C language, using MinilibX minimal graphics library, with pseudo-xml files as input, a dynamic render realtime viewer, and the ability to save bmp at your resolution of choice, and the ability to render on multiple devices for faster distributed rendering.
 
 > This project's main goal is learning raytracing from scratch, making a simple pseudo-xml parser expandable by design, and distributing computational tasks using C sockets to implement cluster rendering.
 
 ![a scene displaying the use of bump mapping to alter refraction](https://i.ibb.co/sjtxBYV/test2.png "a scene displaying the use of bump mapping to alter refraction")
+
 ## Features
 - Simple shapes : sphere, cone, cylinder, ...
 - Complex shapes : hyperboloid, torus, hollow cube, ...
