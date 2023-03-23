@@ -1,6 +1,6 @@
 # RayTracer (RT)
 
-![a 3d object made of polygons, in a box of mirrors](https://i.ibb.co/55kxqwq/ezgif-com-optimize.gif "a 3d object made of polygons, in a box of mirrors")
+![a 3d object made of polygons, in a box of mirrors](https://raw.githubusercontent.com/KernelOverseer/RT/master/rt-scenes/3d_skull_render.gif "a 3d object made of polygons, in a box of mirrors")
 
 A raytracing program built from scratch in C language, using MinilibX minimal graphics library, with pseudo-xml files as input, a dynamic render realtime viewer, and the ability to save bmp at your resolution of choice, and the ability to render on multiple devices for faster distributed rendering.
 
