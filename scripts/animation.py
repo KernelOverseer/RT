@@ -7,9 +7,9 @@ from os.path import isfile, join
 exec_path = "/Users/abiri/goinfre/RT/rt"
 save_path = "/Users/abiri/goinfre/RT/scripts/"
 keep_frames = True
-frame_count = 12
+frame_count = 240
 frames_per_second = 24
-resolution = 720
+resolution = 180
 rendered_files = []
 
 ###################################################
@@ -28,12 +28,12 @@ def generate_rotary_camera(index, center=(0, 0, 0), radius=5.0, rotation=0.5, ro
     return (scene % (resolution, newx, y, newz, center[0], center[1], center[2]))
 
 def generate_evolutionary_fractal_camera(index, center=(0, 0, 0), radius=5.0, rotation=0.5, rotation_offset=0, y=0, min_steps=0, max_steps=50):
-    scene = '''<scene ambiant="0.7" AA="4" resolution="%d" light_samples="1" refraction_depth="1" reflection_depth="1"/>
+    scene = '''<scene ambiant="0.7" AA="1" resolution="%d" light_samples="1" refraction_depth="1" reflection_depth="1"/>
     <camera position="(%f, %f, %f)" lookat="(%f, %f, %f)" fov="40"/>
     <fractal center="(1, 1, 1)" color="#FF00FF" iterations="200" steps="%d" power="3"/>\n'''
     step = min_steps + (index / frame_count) * (max_steps - min_steps)
     angle = ((index / frame_count) * (rotation * 2.0 * math.pi)) - rotation_offset * 2.0 * math.pi
-    radius += (index/frame_count) * 4
+    radius += (index/frame_count) * 2
     newx = center[0] + radius * math.cos(angle)
     newz = center[2] + radius * math.sin(angle)
     return (scene % (resolution, newx, y, newz, center[0], center[1], center[2], 50))
