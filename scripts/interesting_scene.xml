@@ -1,0 +1,16 @@
+<scene ambiant="0.5" AA="1" resolution="720" light_samples="1" refraction_depth="5" reflection_depth="10"/>
+<camera position="(9.270510, 5.180000, -9.741695)" lookat="(0.000000, 15.180000, 18.790000)" fov="80"/>
+<light center="(0, 10.18, 18.79)"  radius="1" intensity="0.7" color="#FFFFFF"/>
+<light center="(-25, 25, -25)"  radius="1" intensity="0.7" color="#FFFFFF"/>
+<fractal center="(9, 5.2, -7)" color="#FF00FF" iterations="100" steps="20" power="3"/>
+<torus center="(5, 18, 37)" big_radius="10" small_radius="1" color="(255,127,80)"/>
+<cube reflection="0" center="(32,43,57)" color="(255,127,80)" side="3"/>
+<cone length="30" center="(0, 10, 0)" color="#FF00FF" axis="(0, 1, 0)" radius="6"/>
+<sphere center="(5, 10, 50)" color="#FF0000" radius="3"/>
+<ellipsoid transparency="0.7" refraction="1.1" center="(10, 30, 45)" axis="(1,5, 5)" translation="(3, 0, 0)" color="#000000" radius="4"/>
+<plane reflection="0.1" center="(0, 0, 0)" length="(160, 160)"  U="(0, 0, 1)" V="(1, 0, 0)"  color="#111111" ttexture_mapping=":checker" mapping_position="(0, 0, 0.25)"/>
+<plane reflection="0.1" center="(0, 50, 0)" length="(160, 160)"  U="(0, 0, 1)" V="(1, 0, 0)"  color="#111111" ttexture_mapping=":pastel" mapping_position="(0, 0, 0.25)"/>
+<plane reflection="0.1" center="(50, 0, 0)" length="(160, 160)"  U="(0, 0, 1)" V="(0, 1, 0)"  color="#111111" ttexture_mapping=":pastel" mapping_position="(0, 0, 0.25)"/>
+<plane reflection="0.1" center="(-50, 0, 0)" length="(160, 160)"  U="(0, 0, 1)" V="(0, 1, 0)"  color="#111111" ttexture_mapping=":pastel" mapping_position="(0, 0, 0.25)"/>
+<plane reflection="0.1" center="(0, 0, 120)" length="(160, 160)"  U="(1, 0, 0)" V="(0, 1, 0)"  color="#111111" ttexture_mapping=":pastel" mapping_position="(0, 0, 0.25)"/>
+<plane reflection="0.1" center="(0, 0, -100)" length="(160, 160)"  U="(1, 0, 0)" V="(0, 1, 0)"  color="#111111" ttexture_mapping=":pastel" mapping_position="(0, 0, 0.25)"/>

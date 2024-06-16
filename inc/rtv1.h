@@ -6,7 +6,7 @@
 /*   By: azarzor <azarzor@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/17 16:13:19 by abiri             #+#    #+#             */
-/*   Updated: 2020/03/04 21:45:21 by azarzor          ###   ########.fr       */
+/*   Updated: 2024/06/16 20:01:04 by abiri            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@
 # define KEY_T 17
 # define SAVE 36
 # define PIXEL_SIZE 5
-# define NUM_THREAD 4
+# define NUM_THREAD 64
 
 /*
 **	buttons macros
