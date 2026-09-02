@@ -3,9 +3,14 @@
 ** Each worker renders one vertical band of the image (the same band split
 ** the original pthread build used) and posts its stripe back as a
 ** transferable buffer.
+**
+** main.js spawns this file with ?v=<build> for cache busting; reuse it for
+** the engine assets so a fresh worker never loads a stale rt.js/rt.wasm.
 */
 
-importScripts('rt.js');
+const SELF_VERSION = new URL(self.location.href).searchParams.get('v') || 'dev';
+
+importScripts('rt.js?v=' + SELF_VERSION);
 
 let mod = null;
 let booted = false;
@@ -37,6 +42,9 @@ function handle(msg) {
           aa: mod._rt_web_scene_aa(),
           dof: mod._rt_web_scene_dof(),
           lightSamples: mod._rt_web_scene_light_samples(),
+          reflectionDepth: mod._rt_web_scene_reflection_depth(),
+          refractionDepth: mod._rt_web_scene_refraction_depth(),
+          aperture: mod._rt_web_get_dof_aperture(),
           camera,
         });
         return;
@@ -49,6 +57,8 @@ function handle(msg) {
         mod._rt_web_set_options(o[0], o[1], o[2], o[3], o[4], o[5], o[6], o[7]);
         const q = msg.quality;
         mod._rt_web_set_quality(q[0], q[1], q[2], q[3]);
+        if (typeof msg.aperture === 'number')
+          mod._rt_web_set_dof_aperture(msg.aperture);
         mod._rt_web_set_dof_focus(msg.dofFocus);
         mod._rt_web_set_filter(msg.filter || 0);
         mod._rt_web_begin_pass(msg.pass.pixelSize, msg.pass.offset, msg.pass.aa);
@@ -134,7 +144,9 @@ function handle(msg) {
   }
 }
 
-Promise.resolve(RTModule({ locateFile: (path) => path })).then((instance) => {
+Promise.resolve(RTModule({
+  locateFile: (path) => path + '?v=' + SELF_VERSION,
+})).then((instance) => {
   mod = instance;
   mod._rt_web_init();
   booted = true;

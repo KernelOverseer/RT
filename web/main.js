@@ -32,6 +32,8 @@ const state = {
   quality: 'normal',
   resolution: 480,
   filter: 0,
+  advanced: { reflectionDepth: 3, refractionDepth: 3, lightSamples: 6, dofSamples: 5, aperture: 0.5 },
+  scenePreset: null,
   workers: [],
   readyCount: 0,
   epoch: 0,
@@ -47,6 +49,7 @@ const state = {
   blitQueued: false,
   moving: false,
   idleTimer: 0,
+  notice: null,
 };
 
 const QUALITY_PRESETS = {
@@ -54,6 +57,19 @@ const QUALITY_PRESETS = {
   normal: { lightSamples: 6, reflectionDepth: 3, refractionDepth: 3, dofSamples: 5 },
   high: { lightSamples: 20, reflectionDepth: 3, refractionDepth: 3, dofSamples: 8 },
 };
+
+/*
+** Quality presets write into state.advanced; editing an Advanced slider
+** switches the select to 'custom', which leaves the values alone.
+*/
+function applyPreset() {
+  let preset = null;
+  if (state.quality === 'scene' && state.scenePreset) preset = state.scenePreset;
+  else if (QUALITY_PRESETS[state.quality]) preset = QUALITY_PRESETS[state.quality];
+  if (!preset) return;
+  Object.assign(state.advanced, preset);
+  syncAdvancedUI();
+}
 
 const FINAL_LADDER = [
   { pixelSize: 8, offset: 8 },
@@ -121,7 +137,7 @@ async function onAllWorkersReady() {
 async function loadScene(entry) {
   state.scene = entry;
   setStatus('loading ' + entry.name + '…');
-  const xml = await (await fetch('scenes/' + entry.file)).text();
+  const xml = await (await fetch('scenes/' + entry.file + '?v=' + BUILD_VERSION)).text();
   const replies = await broadcast({ type: 'load', xml, height: state.resolution });
   const first = replies.find((r) => r.type === 'loaded');
   if (!first) {
@@ -136,14 +152,24 @@ async function loadScene(entry) {
     lightSamples: first.lightSamples,
     camera: first.camera,
   };
+  state.scenePreset = {
+    lightSamples: first.lightSamples,
+    reflectionDepth: first.reflectionDepth,
+    refractionDepth: first.refractionDepth,
+    dofSamples: first.dof,
+  };
   QUALITY_PRESETS.high = {
     lightSamples: Math.max(first.lightSamples, 8),
-    reflectionDepth: 3,
-    refractionDepth: 3,
+    reflectionDepth: first.reflectionDepth,
+    refractionDepth: first.refractionDepth,
     dofSamples: Math.max(first.dof, 5),
   };
+  if (state.quality !== 'custom')
+    state.advanced.aperture = first.aperture;
+  applyPreset();
   resetCamera();
   allocateBuffers();
+  syncAdvancedUI();
   // scenes authored with depth of field turn the toggle on automatically;
   // it stays wherever the user leaves it afterwards
   if (state.sceneInfo.dof > 0) state.options.depthOfField = 1;
@@ -185,9 +211,13 @@ function optionsArray() {
 }
 
 function qualityArray() {
-  const preset = state.moving ? QUALITY_PRESETS.draft
-    : (QUALITY_PRESETS[state.quality] || QUALITY_PRESETS.normal);
-  return [preset.lightSamples, preset.reflectionDepth, preset.refractionDepth, preset.dofSamples];
+  const a = state.advanced;
+  if (state.moving) {
+    // keep camera motion snappy regardless of the chosen settings
+    return [1, Math.min(a.reflectionDepth, 2), Math.min(a.refractionDepth, 2),
+      Math.min(a.dofSamples, 1)];
+  }
+  return [a.lightSamples, a.reflectionDepth, a.refractionDepth, a.dofSamples];
 }
 
 function cameraArray() {
@@ -241,6 +271,7 @@ function nextPass() {
       camera: cameraArray(),
       options: optionsArray(),
       quality: qualityArray(),
+      aperture: state.advanced.aperture,
       dofFocus: state.dofFocus,
       filter: state.filter,
       bandIndex: i,
@@ -304,15 +335,23 @@ function queueBlit(coarse) {
   state.blitQueued = true;
   requestAnimationFrame(() => {
     state.blitQueued = false;
-    new Uint8Array(state.imageData.data.buffer).set(
-      new Uint8Array(state.image.buffer, state.image.byteOffset, state.image.length * 4));
+    // engine pixels are 0x00RRGGBB; canvas ImageData is [R,G,B,A] bytes,
+    // so the blit rotates channels (BMP export keeps engine order and is
+    // already correct)
+    const src = state.image;
+    const dst = new Uint32Array(state.imageData.data.buffer);
+    for (let i = 0; i < src.length; i++) {
+      const v = src[i];
+      dst[i] = 0xff000000 | ((v & 0xff) << 16) | (v & 0xff00) | ((v >>> 16) & 0xff);
+    }
     ctx.putImageData(state.imageData, 0, 0);
   });
 }
 
 function onFinishLadder() {
   state.lastFull = state.image.slice().buffer;
-  setStatus('done — drag to look around, WASD to move');
+  setStatus(state.notice || 'done — drag to look around, WASD to move');
+  state.notice = null;
   updateProgress(1);
   const effect = parseInt(document.getElementById('effect-select').value, 10);
   if (effect) applyEffect(effect);
@@ -384,7 +423,10 @@ function moveCamera(dt) {
   if (keys.r) { state.dofFocus += 12 * dt; changed = true; }
   if (keys.t) { state.dofFocus = Math.max(1, state.dofFocus - 12 * dt); changed = true; }
 
-  if (changed) applyAngles();
+  if (changed) {
+    applyAngles();
+    if (keys.r || keys.t) syncFocusUI();
+  }
   return changed;
 }
 
@@ -471,7 +513,9 @@ async function clickFocus(e) {
   state.camera.look = reply.camera.slice(3, 6);
   state.dofFocus = reply.dofFocus;
   state.angles = null;
-  setStatus('focused at ' + reply.distance.toFixed(1) + ' units');
+  syncFocusUI();
+  state.notice = 'in focus at ' + reply.distance.toFixed(1) + ' units';
+  setStatus(state.notice);
   scheduleRender(false);
 }
 
@@ -560,6 +604,41 @@ function buildUi() {
 
   document.getElementById('quality-select').addEventListener('change', (e) => {
     state.quality = e.target.value;
+    applyPreset();
+    scheduleRender(false);
+  });
+
+  /*
+  ** advanced sliders: readout on every input, engine value + re-render on
+  ** release; touching one of them makes the quality preset 'custom'
+  */
+  const ADVANCED_SLIDERS = [
+    ['adv-reflection', 'reflectionDepth'],
+    ['adv-refraction', 'refractionDepth'],
+    ['adv-shadows', 'lightSamples'],
+    ['adv-dofsamples', 'dofSamples'],
+    ['adv-aperture', 'aperture'],
+  ];
+  for (const [id, key] of ADVANCED_SLIDERS) {
+    const slider = document.getElementById(id);
+    const readout = document.getElementById(id + '-val');
+    slider.addEventListener('input', () => {
+      readout.textContent = formatAdvanced(key, parseFloat(slider.value));
+    });
+    slider.addEventListener('change', () => {
+      state.advanced[key] = parseFloat(slider.value);
+      setQuality('custom');
+      scheduleRender(false);
+    });
+  }
+
+  const focusSlider = document.getElementById('adv-focus');
+  const focusReadout = document.getElementById('adv-focus-val');
+  focusSlider.addEventListener('input', () => {
+    focusReadout.textContent = focusSlider.value;
+  });
+  focusSlider.addEventListener('change', () => {
+    state.dofFocus = parseFloat(focusSlider.value);
     scheduleRender(false);
   });
 
@@ -607,13 +686,51 @@ function buildUi() {
 
   document.getElementById('reset-button').addEventListener('click', () => {
     resetCamera();
+    syncFocusUI();
     scheduleRender(false);
   });
 }
 
+function formatAdvanced(key, value) {
+  return key === 'aperture' ? value.toFixed(2) : String(Math.round(value));
+}
+
+function setQuality(name) {
+  state.quality = name;
+  const select = document.getElementById('quality-select');
+  const custom = Array.from(select.options).find((o) => o.value === 'custom');
+  if (custom) custom.disabled = false;
+  select.value = name;
+}
+
+function syncAdvancedUI() {
+  for (const [id, key] of [
+    ['adv-reflection', 'reflectionDepth'],
+    ['adv-refraction', 'refractionDepth'],
+    ['adv-shadows', 'lightSamples'],
+    ['adv-dofsamples', 'dofSamples'],
+    ['adv-aperture', 'aperture'],
+  ]) {
+    const slider = document.getElementById(id);
+    if (!slider) continue;
+    slider.value = state.advanced[key];
+    document.getElementById(id + '-val').textContent =
+      formatAdvanced(key, state.advanced[key]);
+  }
+  syncFocusUI();
+}
+
+function syncFocusUI() {
+  const slider = document.getElementById('adv-focus');
+  if (!slider) return;
+  slider.value = Math.round(state.dofFocus);
+  document.getElementById('adv-focus-val').textContent =
+    String(Math.round(state.dofFocus));
+}
+
 buildUi();
 state.workers = Array.from({ length: WORKER_COUNT }, () => {
-  const worker = new Worker('worker.js');
+  const worker = new Worker('worker.js?v=' + BUILD_VERSION);
   worker.onmessage = (ev) => onWorkerMessage(ev.data);
   return worker;
 });

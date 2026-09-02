@@ -101,7 +101,9 @@ int				ft_load_scene(t_xml_tag *tag, t_rtv *env)
 	env->scene.aa = ft_clip_min_max(0, 8,
 				ft_parse_float(ft_xml_get_value(tag, "AA", "0"), &status));
 	env->scene.dof = ft_clip_min(0, ft_parse_float(
-				ft_xml_get_value(tag, "depth_of_field", "0"), &status));
+			ft_xml_get_value(tag, "depth_of_field", "0"), &status));
+	env->scene.dof_aperture = ft_clip_min(0, ft_parse_float(
+			ft_xml_get_value(tag, "dof_aperture", "0.5"), &status));
 	env->scene.reflection_depth = ft_parse_float(
 				ft_xml_get_value(tag, "reflection_depth", "3"), &status);
 	env->scene.refraction_depth = ft_parse_float(

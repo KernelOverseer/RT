@@ -58,13 +58,17 @@ $(NAME): $(SRC) $(LIBFT_SRC) $(FTMATHS_SRC) $(TTSLIST_SRC)
 	$(CC) $(CFLAGS) $(INCLUDES) $(SRC) $(LIBFT_SRC) $(FTMATHS_SRC) \
 		$(TTSLIST_SRC) -o $(NAME)
 
+VERSION := $(shell git rev-parse --short HEAD 2>/dev/null || date +%s)
+
 stage:
 	@mkdir -p dist/scenes
 	@for scene in $(SCENES); do \
 		cp "$(ROOT)/rt-scenes/$$scene" dist/scenes/ ; \
 	done
 	@if [ -f main.js ]; then cp main.js worker.js scenes.js index.html style.css dist/ ; fi
-	@echo "web build ready in web/dist/"
+	@sed -i "s/BUILD_VERSION = 'dev'/BUILD_VERSION = '$(VERSION)'/" dist/scenes.js
+	@sed -i -E 's/(src|href)="([^"?]+\.js)"/\1="\2?v=$(VERSION)"/; s/(src|href)="([^"?]+\.css)"/\1="\2?v=$(VERSION)"/' dist/index.html
+	@echo "web build ready in web/dist/ (version $(VERSION))"
 
 test: all
 	node smoke_test.js

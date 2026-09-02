@@ -48,6 +48,7 @@ static void	rt_web_default_scene(t_scene *scene)
 	scene->aa = 0;
 	scene->dof = 0;
 	scene->dof_focus = 10;
+	scene->dof_aperture = 0.5;
 	scene->reflection_depth = 3;
 	scene->refraction_depth = 3;
 	scene->width = 1.7777777778 * 720;
@@ -237,6 +238,36 @@ void	rt_web_set_quality(int light_samples, int reflection_depth,
 	g_rtv.scene.reflection_depth = reflection_depth;
 	g_rtv.scene.refraction_depth = refraction_depth;
 	g_rtv.scene.dof = dof_samples;
+}
+
+/*
+** advanced per-frame settings, mirrored in the UI's Advanced panel
+*/
+
+EMSCRIPTEN_KEEPALIVE
+void	rt_web_set_dof_aperture(double aperture)
+{
+	if (aperture < 0)
+		aperture = 0;
+	g_rtv.scene.dof_aperture = aperture;
+}
+
+EMSCRIPTEN_KEEPALIVE
+double	rt_web_get_dof_aperture(void)
+{
+	return (g_rtv.scene.dof_aperture);
+}
+
+EMSCRIPTEN_KEEPALIVE
+int		rt_web_scene_reflection_depth(void)
+{
+	return (g_rtv.scene.reflection_depth);
+}
+
+EMSCRIPTEN_KEEPALIVE
+int		rt_web_scene_refraction_depth(void)
+{
+	return (g_rtv.scene.refraction_depth);
 }
 
 /*

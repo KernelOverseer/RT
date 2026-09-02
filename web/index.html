@@ -54,9 +54,11 @@
         <div>
           <label for="quality-select">Quality</label>
           <select id="quality-select">
+            <option value="scene">Scene</option>
             <option value="draft">Draft</option>
             <option value="normal" selected>Normal</option>
             <option value="high">High</option>
+            <option value="custom" disabled>Custom</option>
           </select>
         </div>
         <div>
@@ -74,6 +76,42 @@
         <label>Shading</label>
         <div id="toggles" class="toggles"></div>
       </div>
+
+      <details class="group advanced" id="advanced-panel">
+        <summary>Advanced</summary>
+        <div class="slider-row">
+          <label for="adv-reflection">Reflection depth</label>
+          <input type="range" id="adv-reflection" min="0" max="8" step="1" value="3">
+          <span class="value" id="adv-reflection-val">3</span>
+        </div>
+        <div class="slider-row">
+          <label for="adv-refraction">Refraction depth</label>
+          <input type="range" id="adv-refraction" min="0" max="10" step="1" value="3">
+          <span class="value" id="adv-refraction-val">3</span>
+        </div>
+        <div class="slider-row">
+          <label for="adv-shadows">Soft shadow samples</label>
+          <input type="range" id="adv-shadows" min="1" max="40" step="1" value="6">
+          <span class="value" id="adv-shadows-val">6</span>
+        </div>
+        <div class="slider-row">
+          <label for="adv-dofsamples">DOF samples</label>
+          <input type="range" id="adv-dofsamples" min="0" max="12" step="1" value="5">
+          <span class="value" id="adv-dofsamples-val">5</span>
+        </div>
+        <div class="slider-row">
+          <label for="adv-aperture">DOF aperture</label>
+          <input type="range" id="adv-aperture" min="0" max="1.5" step="0.05" value="0.5">
+          <span class="value" id="adv-aperture-val">0.50</span>
+        </div>
+        <div class="slider-row">
+          <label for="adv-focus">Focus distance</label>
+          <input type="range" id="adv-focus" min="1" max="300" step="1" value="30">
+          <span class="value" id="adv-focus-val">30</span>
+        </div>
+        <p class="description">Presets overwrite these; touching a slider switches
+        quality to “custom”. Focus also follows clicks and the R/T keys.</p>
+      </details>
 
       <div class="group row2">
         <div>

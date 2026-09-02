@@ -209,7 +209,8 @@ typedef struct			s_scene
 	int					light_samples;
 	int					dof;
 	int					dof_focus;
-}						t_scene;
+	double				dof_aperture;
+}					t_scene;
 
 typedef struct			s_options
 {

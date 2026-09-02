@@ -1,7 +1,13 @@
 /*
 ** scene catalog: every entry is a self-contained .xml from rt-scenes/
 ** (verified to render without external texture assets by web/smoke_test.js)
+**
+** BUILD_VERSION is stamped by `make -C web` (git short hash) and appended
+** to every asset URL so GitHub Pages' 10-minute cache can't serve stale
+** files after a deploy.
 */
+
+const BUILD_VERSION = 'dev';
 
 const SCENES = [
   {

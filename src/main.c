@@ -27,6 +27,7 @@ void			ft_init_default_scene(t_scene *scene)
 	scene->aa = 0;
 	scene->dof = 0;
 	scene->dof_focus = 10;
+	scene->dof_aperture = 0.5;
 	scene->reflection_depth = 3;
 	scene->refraction_depth = 3;
 	scene->width = 1.7777777778 * 720;
