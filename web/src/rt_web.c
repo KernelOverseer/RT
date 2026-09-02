@@ -307,6 +307,45 @@ void	rt_web_render_band(int index, int count)
 }
 
 /*
+** RTBench-style tile render for the benchmark page: renders tile `index`
+** of a tiles_x * tiles_y grid at full resolution into the shared buffer.
+** Edge tiles are clamped so uneven divisions cover the frame exactly.
+*/
+
+EMSCRIPTEN_KEEPALIVE
+void	rt_web_render_tile(int index, int tiles_x, int tiles_y)
+{
+	t_color	rgb;
+	int		tile_w;
+	int		tile_h;
+	int		x0;
+	int		y0;
+	int		x1;
+	int		y1;
+
+	tile_w = g_rtv.scene.width / tiles_x;
+	tile_h = g_rtv.scene.height / tiles_y;
+	x0 = (index % tiles_x) * tile_w;
+	y0 = (index / tiles_x) * tile_h;
+	x1 = (index % tiles_x == tiles_x - 1) ? g_rtv.scene.width : x0 + tile_w;
+	y1 = (index / tiles_x == tiles_y - 1) ? g_rtv.scene.height : y0 + tile_h;
+	g_rtv.column = y0;
+	while (g_rtv.column < y1)
+	{
+		g_rtv.row = x0;
+		while (g_rtv.row < x1)
+		{
+			rgb = (t_color){0, 0, 0};
+			if (g_rtv.scene.dof && g_rtv.options.depth_of_field)
+				ft_color_best_node_dof(&g_rtv, rgb);
+			ft_color_best_node(&g_rtv, rgb);
+			g_rtv.row++;
+		}
+		g_rtv.column++;
+	}
+}
+
+/*
 ** serial anaglyph stereo, band-limited version of ft_shoot_stero: the
 ** neighbouring bands belong to other workers, so the eye buffers are only
 ** summed inside this worker's band to avoid doubling stale pixels

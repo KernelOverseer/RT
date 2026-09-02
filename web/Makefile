@@ -45,6 +45,7 @@ INCLUDES = -I inc -I $(INC_DIR) -I $(ROOT)/libs/libft \
 CFLAGS = -O3 -Wall -msimd128 -Du_int32_t=uint32_t \
 		 -sMODULARIZE=1 -sEXPORT_NAME=RTModule \
 		 -sALLOW_MEMORY_GROWTH=1 -sINITIAL_MEMORY=64MB \
+		 -sSTACK_SIZE=4194304 \
 		 -sEXPORTED_RUNTIME_METHODS=FS,HEAPU8,HEAPF64,allocateUTF8,UTF8ToString \
 		 -sEXPORTED_FUNCTIONS=_malloc,_free \
 		 --no-entry
@@ -53,7 +54,7 @@ SCENES = $(notdir $(wildcard $(ROOT)/rt-scenes/*.xml))
 
 all: $(NAME) stage
 
-$(NAME): $(SRC) $(LIBFT_SRC) $(FTMATHS_SRC) $(TTSLIST_SRC)
+$(NAME): $(SRC) $(LIBFT_SRC) $(FTMATHS_SRC) $(TTSLIST_SRC) Makefile
 	@mkdir -p dist
 	$(CC) $(CFLAGS) $(INCLUDES) $(SRC) $(LIBFT_SRC) $(FTMATHS_SRC) \
 		$(TTSLIST_SRC) -o $(NAME)
@@ -65,9 +66,10 @@ stage:
 	@for scene in $(SCENES); do \
 		cp "$(ROOT)/rt-scenes/$$scene" dist/scenes/ ; \
 	done
-	@if [ -f main.js ]; then cp main.js worker.js scenes.js index.html style.css dist/ ; fi
+	@if [ -f main.js ]; then cp main.js worker.js scenes.js index.html style.css bench.html bench.js dist/ ; fi
 	@sed -i "s/BUILD_VERSION = 'dev'/BUILD_VERSION = '$(VERSION)'/" dist/scenes.js
 	@sed -i -E 's/(src|href)="([^"?]+\.js)"/\1="\2?v=$(VERSION)"/; s/(src|href)="([^"?]+\.css)"/\1="\2?v=$(VERSION)"/' dist/index.html
+	@sed -i -E 's/(src|href)="([^"?]+\.js)"/\1="\2?v=$(VERSION)"/; s/(src|href)="([^"?]+\.css)"/\1="\2?v=$(VERSION)"/' dist/bench.html
 	@echo "web build ready in web/dist/ (version $(VERSION))"
 
 test: all

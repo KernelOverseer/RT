@@ -1,0 +1,6 @@
+<scene ambiant="0.5" AA="1" resolution="720" light_samples="1"/>
+<camera position="(-4.5, 0.6, -1.2)" lookat="(0, 0, 0)" fov="40"/>
+<light center="(10, 5, 5)" intensity="0.5" color="#FFFFFF"/>
+<light center="(-8, 6, 4)" intensity="0.2" color="#7FA8FF"/>
+<fractal center="(0, 0, 0)" iterations="50" steps="50" power="5"/>
+<plane center="(0, -1.4, 0)" U="(0, 0, 1)" V="(1, 0, 0)" length="(40, 40)" color="#D3D3D3" reflection="0.3"/>

@@ -321,6 +321,87 @@ kbd {
   line-height: 1.6;
 }
 
+/* benchmark page */
+
+.scoreboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-top: 14px;
+  padding: 16px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.score-big {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+#score-value {
+  font-size: 44px;
+  font-weight: 800;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.score-unit {
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.score-details {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.checkline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.checkline input { accent-color: var(--accent); }
+
+.actions button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+  font-weight: 600;
+}
+
+.actions button.primary:hover { color: var(--bg); opacity: 0.9; }
+
+.actions button.subtle {
+  font-size: 12px;
+  padding: 6px 10px;
+  color: var(--text-dim);
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+  color: var(--text-dim);
+}
+
+.history-table th, .history-table td {
+  text-align: left;
+  padding: 3px 6px 3px 0;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.history-table th { color: var(--text-dim); font-weight: 600; }
+.history-table td:last-child { color: var(--accent); font-weight: 600; }
+
 @media (max-width: 900px) {
   main { padding: 14px; }
   .panel { flex: 1 1 100%; }

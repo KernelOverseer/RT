@@ -16,7 +16,7 @@
 # include "ttslist.h"
 # include "parser.h"
 # include "objects.h"
-# include <mlx.h>
+# include "mlx.h"
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <fcntl.h>
@@ -24,6 +24,19 @@
 # include <pthread.h>
 # include <stdio.h>
 # include <limits.h>
+
+/*
+**	glibc/macOS spell the fixed-width types u_intNN_t in some headers while
+**	the BMP writer uses the stdint spelling; make both exist everywhere
+**	(fix carried over from RTBench). musl only has the stdint spelling, so
+**	the web build keeps its -Du_int32_t=uint32_t shim instead.
+*/
+
+# if !defined(__APPLE__) && !defined(__EMSCRIPTEN__) && !defined(_WIN32)
+typedef u_int16_t uint16_t;
+typedef u_int32_t uint32_t;
+typedef u_int64_t uint64_t;
+# endif
 
 /*
 ** raytracing macros

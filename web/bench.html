@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RTBench — raytracing benchmark</title>
+  <meta name="description" content="Benchmark the RT raytracing engine in your browser: tile-based rendering across Web Workers, one tile per task, with a normalized performance score.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23101418'/%3E%3Ccircle cx='13' cy='13' r='9' fill='none' stroke='%234fd1c5' stroke-width='3'/%3E%3Cpath d='M20 20 L27 27' stroke='%234fd1c5' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M4 28 L12 28' stroke='%23ff2e88' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <script src="scenes.js" defer></script>
+  <script src="bench.js" defer></script>
+</head>
+<body class="bench">
+  <header>
+    <div class="title">
+      <h1>RTBench<span class="accent">.</span></h1>
+      <p>the same C engine, timed — one tile per task, every core in your browser</p>
+    </div>
+    <div class="meta">
+      <span id="worker-count">spawning workers…</span>
+      <a href="index.html">interactive demo ↗</a>
+      <a href="https://github.com/KernelOverseer/RT" target="_blank" rel="noopener">source ↗</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="stage">
+      <div class="canvas-wrap">
+        <canvas id="view" width="854" height="480"></canvas>
+      </div>
+      <div class="statusbar">
+        <span id="status">booting…</span>
+        <div class="progress"><div id="progress-fill"></div></div>
+      </div>
+      <div class="scoreboard">
+        <div class="score-big">
+          <span id="score-value">—</span>
+          <span class="score-unit">pts</span>
+        </div>
+        <div class="score-details">
+          <span id="score-details">run a benchmark to see your score</span>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="group">
+        <label for="scene-select">Scene</label>
+        <select id="scene-select"></select>
+        <p id="scene-description" class="description"></p>
+      </div>
+
+      <div class="group row2">
+        <div>
+          <label for="resolution-select">Resolution</label>
+          <select id="resolution-select">
+            <option value="360">360p</option>
+            <option value="480" selected>480p</option>
+            <option value="540">540p</option>
+            <option value="720">720p</option>
+          </select>
+        </div>
+        <div>
+          <label for="workers-select">Workers</label>
+          <select id="workers-select"></select>
+        </div>
+      </div>
+
+      <div class="group actions">
+        <label class="checkline">
+          <input type="checkbox" id="warmup-check" checked>
+          warm-up run first (recommended)
+        </label>
+        <button id="run-button" class="primary">Run benchmark</button>
+      </div>
+
+      <div class="group">
+        <label>Score</label>
+        <p class="description">
+          points = rendered samples per second, in units of 100 kSamples/s.
+          One sample = one anti-aliased primary ray (scene AA applies), so
+          scores are comparable across resolutions for the same scene.
+          Tiles are handed to workers dynamically — the same
+          next-tile scheduling the native RTBench used for its threads.
+        </p>
+      </div>
+
+      <div class="group">
+        <label>History</label>
+        <div id="history"></div>
+        <button id="clear-history" class="subtle">clear history</button>
+      </div>
+
+      <footer>
+        <p>RTBench (2021) rebuilt on the WebAssembly port: tile grid
+        32×20, one WASM engine instance per worker, timing from first
+        dispatch to last tile — thread creation is outside the clock and
+        the score is normalized by rendered samples.</p>
+      </footer>
+    </aside>
+  </main>
+</body>
+</html>

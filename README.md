@@ -22,6 +22,8 @@ make -C web test              # node smoke test: renders every bundled scene
 
 GitHub Actions builds and publishes it on every push (`.github/workflows/deploy-web.yml`). Each Web Worker runs its own WASM instance and renders one vertical band of the image — the same band split the original pthread build used — so the pool needs no SharedArrayBuffer and works on GitHub Pages.
 
+There is also a **[benchmark page](https://kerneloverseer.github.io/RT/bench.html)**, a browser rebuild of RTBench (2021): the frame is split into a 32×20 tile grid, tiles are handed to workers dynamically exactly like RTBench's `next_cluster_index` thread scheduling, tile borders draw in magenta as they finish, and the score is normalized by rendered samples (fixing the original's timing, which raced its threads and divided an arbitrary constant by microseconds). RTBench's own benchmark scenes ship too — including its 282-triangle "cat", which it turns out never actually rendered back then because every `<ttriangle>` tag was a typo the parser silently skipped.
+
 ![a scene displaying the use of bump mapping to alter refraction](https://i.ibb.co/sjtxBYV/test2.png "a scene displaying the use of bump mapping to alter refraction")
 
 ## Features

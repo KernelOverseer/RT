@@ -88,6 +88,47 @@ function handle(msg) {
         }, [stripe.buffer]);
         return;
       }
+      case 'bench': {
+        const c = msg.camera;
+        mod._rt_web_set_camera(c[0], c[1], c[2], c[3], c[4], c[5], c[6]);
+        const o = msg.options;
+        mod._rt_web_set_options(o[0], o[1], o[2], o[3], o[4], o[5], o[6], o[7]);
+        const q = msg.quality;
+        mod._rt_web_set_quality(q[0], q[1], q[2], q[3]);
+        mod._rt_web_set_dof_aperture(msg.aperture || 0.5);
+        mod._rt_web_set_dof_focus(msg.dofFocus || 30);
+        mod._rt_web_set_filter(msg.filter || 0);
+        mod._rt_web_begin_pass(1, 0, msg.pass.aa);
+        const t0 = performance.now();
+        mod._rt_web_render_tile(msg.tile, msg.tilesX, msg.tilesY);
+        const tileMs = performance.now() - t0;
+        const w = mod._rt_web_scene_width();
+        const h = mod._rt_web_scene_height();
+        const tileW = Math.floor(w / msg.tilesX);
+        const tileH = Math.floor(h / msg.tilesY);
+        const x0 = (msg.tile % msg.tilesX) * tileW;
+        const y0 = Math.floor(msg.tile / msg.tilesX) * tileH;
+        const x1 = (msg.tile % msg.tilesX === msg.tilesX - 1) ? w : x0 + tileW;
+        const y1 = (Math.floor(msg.tile / msg.tilesX) === msg.tilesY - 1) ? h : y0 + tileH;
+        const pixels = new Uint32Array(mod.HEAPU8.buffer, mod._rt_web_pixels(), w * h);
+        const tile = new Uint32Array((x1 - x0) * (y1 - y0));
+        let k = 0;
+        for (let y = y0; y < y1; y++)
+          for (let x = x0; x < x1; x++)
+            tile[k++] = pixels[y * w + x];
+        self.postMessage({
+          type: 'bench-tile',
+          id: msg.id,
+          tile: msg.tile,
+          x0, y0, x1, y1,
+          width: w,
+          height: h,
+          aa: msg.pass.aa,
+          ms: tileMs,
+          pixels: tile.buffer,
+        }, [tile.buffer]);
+        return;
+      }
       case 'raycast': {
         const c = msg.camera;
         mod._rt_web_set_camera(c[0], c[1], c[2], c[3], c[4], c[5], c[6]);
