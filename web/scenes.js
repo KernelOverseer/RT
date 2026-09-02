@@ -10,6 +10,41 @@ const SCENES = [
     description: 'The README example: cone, spheres, ellipsoid and planes with soft shadows.',
   },
   {
+    file: 'refraction_gallery.xml',
+    name: 'Refraction gallery',
+    description: 'Five glass spheres from IOR 1.05 to 2.05, each swallowing a colored cube. Walk through them.',
+  },
+  {
+    file: 'mandelbulb.xml',
+    name: 'Mandelbulb',
+    description: 'A ray-marched Mandelbulb fractal — the engine walks the distance field for every pixel.',
+  },
+  {
+    file: 'mirror_room.xml',
+    name: 'Mirror room',
+    description: 'A hall of mirrors: glass torus, chrome pill and reflections bouncing five levels deep.',
+  },
+  {
+    file: 'depth_of_field.xml',
+    name: 'Depth of field',
+    description: 'Three clusters at different depths. Click any sphere to pull it into focus.',
+  },
+  {
+    file: 'ring_study.xml',
+    name: 'Ring study',
+    description: 'Nested quartic tori — glass, matte and checker-mapped — around a warm bulb.',
+  },
+  {
+    file: 'planet_rise.xml',
+    name: 'Planet rise',
+    description: 'A parallel sun grazing a ringed planet, long shadows over a checkered plain.',
+  },
+  {
+    file: 'rgb_studio.xml',
+    name: 'RGB studio',
+    description: 'Three pure red/green/blue lights mixing on white spheres — drag around to remix.',
+  },
+  {
     file: 'reflection_tranparency.xml',
     name: 'Glass & mirrors',
     description: 'Reflection, refraction and transparency stacked on curved surfaces.',

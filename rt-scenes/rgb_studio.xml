@@ -1,0 +1,10 @@
+<scene ambiant="0.1" AA="4" resolution="720" light_samples="1"/>
+<camera position="(0, 6, 44)" lookat="(0, 6, 0)" fov="44"/>
+<light center="(-22, 14, 10)" radius="0.001" intensity="1" color="#FF3050"/>
+<light center="(26, 16, 4)" radius="0.001" intensity="1" color="#30FF70"/>
+<light center="(0, 10, -26)" radius="0.001" intensity="1" color="#3060FF"/>
+<plane center="(0, 0, 0)" U="(0, 0, 1)" V="(1, 0, 0)" length="(200, 200)" color="#E8E8E8" reflection="0.12"/>
+<sphere center="(-11, 5, 0)" radius="5" color="#FFFFFF"/>
+<sphere center="(11, 5, 0)" radius="5" color="#FFFFFF"/>
+<sphere center="(0, 5, -2)" radius="5" color="#FFFFFF" transparency="0.9" refraction="1.5"/>
+<sphere center="(0, 12, -14)" radius="2.5" color="#FFFFFF" reflection="1"/>

@@ -51,12 +51,14 @@ CFLAGS = -O3 -Wall -msimd128 -Du_int32_t=uint32_t \
 
 SCENES = $(notdir $(wildcard $(ROOT)/rt-scenes/*.xml))
 
-all: $(NAME)
+all: $(NAME) stage
 
 $(NAME): $(SRC) $(LIBFT_SRC) $(FTMATHS_SRC) $(TTSLIST_SRC)
 	@mkdir -p dist
 	$(CC) $(CFLAGS) $(INCLUDES) $(SRC) $(LIBFT_SRC) $(FTMATHS_SRC) \
 		$(TTSLIST_SRC) -o $(NAME)
+
+stage:
 	@mkdir -p dist/scenes
 	@for scene in $(SCENES); do \
 		cp "$(ROOT)/rt-scenes/$$scene" dist/scenes/ ; \
@@ -74,4 +76,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all test clean fclean re
+.PHONY: all stage test clean fclean re

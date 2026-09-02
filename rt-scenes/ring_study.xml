@@ -1,0 +1,11 @@
+<scene ambiant="0.4" AA="4" resolution="720" light_samples="12"/>
+<camera position="(18, 16, 42)" lookat="(0, 6, -6)" fov="46"/>
+<light center="(-30, 60, 30)" radius="4" intensity="1" color="#FFFFFF"/>
+<light center="(40, 20, 30)" radius="2" intensity="0.2" color="#7FA8FF"/>
+<plane center="(0, 0, 0)" U="(0, 0, 1)" V="(1, 0, 0)" length="(200, 200)" color="#191C22" reflection="0.35"/>
+<torus center="(0, 6, -6)" big_radius="14" small_radius="4.5" color="#FFFFFF" transparency="0.92" refraction="1.5"/>
+<torus center="(0, 15, -6)" big_radius="8" small_radius="2.5" color="#FF6B6B"/>
+<torus center="(0, 2.2, -6)" big_radius="20" small_radius="2.2" color="#4ECDC4" texture_mapping=":checker" mapping_position="(0, 0, 0.06)"/>
+<light center="(0, 15, -6)" radius="0.001" intensity="0.6" color="#FFE8B0"/>
+<pill rotation="(90, 0, 0)" length="8" radius="2.5" center="(-22, 3, 6)" color="#FFD166" reflection="1"/>
+<cube center="(22, 3, 8)" side="6" color="#8E44AD" reflection="0.5"/>

@@ -1,0 +1,13 @@
+<scene ambiant="0.3" AA="4" resolution="720" light_samples="12" reflection_depth="5"/>
+<camera position="(0, 12, 24)" lookat="(0, 9, -10)" fov="50"/>
+<light center="(0, 36, 0)" radius="8" intensity="0.95" color="#FFF4E0"/>
+<light center="(-25, 18, 20)" radius="2" intensity="0.2" color="#7FA8FF"/>
+<plane center="(0, 0, 0)" U="(0, 0, 1)" V="(1, 0, 0)" length="(80, 100)" color="#D5D8DE" reflection="0.35"/>
+<plane center="(0, 44, 0)" U="(0, 0, 1)" V="(1, 0, 0)" length="(80, 100)" color="#22262E"/>
+<plane center="(-40, 22, -20)" U="(0, 1, 0)" V="(0, 0, 1)" length="(44, 100)" color="#C9CDD4" reflection="0.9"/>
+<plane center="(40, 22, -20)" U="(0, 1, 0)" V="(0, 0, 1)" length="(44, 100)" color="#C9CDD4" reflection="0.9"/>
+<plane center="(0, 22, -70)" U="(0, 1, 0)" V="(1, 0, 0)" length="(80, 100)" color="#3E4450" texture_mapping=":marble" mapping_position="(0, 0, 0.08)"/>
+<torus center="(0, 4, -12)" big_radius="9" small_radius="3" color="#FFFFFF" transparency="0.9" refraction="1.5"/>
+<pill rotation="(0, 0, 0)" length="14" radius="3.2" center="(-16, 7, -14)" color="#FFD166" reflection="1"/>
+<cube center="(17, 4, -16)" side="8" color="#FF6B6B" reflection="0.5"/>
+<sphere center="(-6, 22, -30)" radius="5" color="#4ECDC4" reflection="1"/>

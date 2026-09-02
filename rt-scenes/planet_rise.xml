@@ -1,0 +1,9 @@
+<scene ambiant="0.12" AA="4" resolution="720" light_samples="8"/>
+<camera position="(0, 10, 70)" lookat="(0, 26, -40)" fov="48"/>
+<light type="parallel" center="(125, 124, 210)" radius="250" direction="(-0.42, -0.36, -0.83)" intensity="1" color="#FFD9A0"/>
+<plane center="(0, 0, 0)" U="(0, 0, 1)" V="(1, 0, 0)" length="(300, 400)" color="#181C24" texture_mapping=":checker" mapping_position="(0, 0, 0.01)"/>
+<sphere center="(-6, 32, -75)" radius="32" color="#C9B8FF" texture_mapping=":pastel" mapping_position="(0, 0, 3)"/>
+<torus center="(-6, 32, -75)" big_radius="44" small_radius="1.8" color="#E8D5B0" transparency="0.35" refraction="1.3"/>
+<sphere center="(30, 6, -18)" radius="6" color="#B0C4DE" texture_mapping=":marble" mapping_position="(0, 0, 2)"/>
+<sphere center="(-34, 4, -34)" radius="4" color="#D8BFD8" reflection="1"/>
+<sphere center="(16, 2.5, 22)" radius="2.5" color="#FFB347"/>

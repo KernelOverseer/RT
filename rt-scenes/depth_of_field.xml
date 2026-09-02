@@ -1,0 +1,13 @@
+<scene ambiant="0.4" AA="4" resolution="720" light_samples="10" depth_of_field="6"/>
+<camera position="(0, 5, 34)" lookat="(0, 4, -20)" fov="52"/>
+<light center="(-25, 55, 25)" radius="6" intensity="0.95" color="#FFFFFF"/>
+<plane center="(0, 0, 0)" U="(0, 0, 1)" V="(1, 0, 0)" length="(200, 400)" color="#2B2F36"/>
+<sphere center="(-4, 3, 0)" radius="3" color="#E74C3C"/>
+<sphere center="(6, 2.5, -3)" radius="2.5" color="#ECF0F1"/>
+<sphere center="(-14, 2, -6)" radius="2" color="#F1C40F"/>
+<sphere center="(2, 3.5, -35)" radius="3.5" color="#3498DB" transparency="0.85" refraction="1.5"/>
+<sphere center="(-8, 2.5, -32)" radius="2.5" color="#E67E22"/>
+<sphere center="(13, 3, -38)" radius="3" color="#9B59B6"/>
+<cube center="(-2, 2, -68)" side="4" color="#2ECC71"/>
+<sphere center="(9, 4, -70)" radius="4" color="#ECF0F1" reflection="1"/>
+<sphere center="(-15, 3, -66)" radius="3" color="#1ABC9C"/>

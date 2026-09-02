@@ -97,8 +97,8 @@ int				ft_get_hex_byte(char *string, int *status)
 		while (jndex < 16)
 		{
 			if (ft_tolower(string[index]) ==
-					"0123456789adcdef"[jndex])
-				byte += jndex * ((index == 0) ? 1 : 16);
+					"0123456789abcdef"[jndex])
+				byte += jndex * ((index == 0) ? 16 : 1);
 			jndex++;
 		}
 		index++;

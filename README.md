@@ -10,7 +10,7 @@ A raytracing program built from scratch in C language, using MinilibX minimal gr
 
 The same C engine (reflection, refraction, soft shadows, procedural textures, all of it) is compiled to WebAssembly with Emscripten and rendered live by a pool of Web Workers — no rewrite, the engine source is shared between the native and web builds.
 
-➡️ **[Live demo](https://kerneloverseer.github.io/RT/)** — drag to look around, WASD to move, click to aim and set the depth-of-field focus, switch between 16 scenes from `rt-scenes/`, toggle shading options, apply filters, or download your frame as a BMP exactly like the native `--no_window` mode writes it.
+➡️ **[Live demo](https://kerneloverseer.github.io/RT/)** — drag to look around, WASD to move, click to aim and set the depth-of-field focus. 23 scenes ship with the demo: the originals from `rt-scenes/` plus new showcases composed for the web build — a refraction gallery (IOR 1.05→2.05), a ray-marched Mandelbulb, a mirror room, a depth-of-field studio, a planetary ring rise, and an RGB light-mixing studio. Toggle shading options, apply filters, or download your frame as a BMP exactly like the native `--no_window` mode writes it.
 
 The web build lives in [`web/`](web/):
 

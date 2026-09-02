@@ -144,6 +144,11 @@ async function loadScene(entry) {
   };
   resetCamera();
   allocateBuffers();
+  // scenes authored with depth of field turn the toggle on automatically;
+  // it stays wherever the user leaves it afterwards
+  if (state.sceneInfo.dof > 0) state.options.depthOfField = 1;
+  const dofToggle = document.getElementById('toggle-depthOfField');
+  if (dofToggle) dofToggle.checked = !!state.options.depthOfField;
   document.getElementById('scene-description').textContent = entry.description;
   scheduleRender(false);
 }
@@ -152,7 +157,7 @@ function resetCamera() {
   const c = state.sceneInfo.camera;
   state.camera = { pos: [c[0], c[1], c[2]], look: [c[3], c[4], c[5]], fov: c[6] };
   state.angles = null;
-  state.dofFocus = 10;
+  state.dofFocus = 30; // sensible subject distance for the DOF scenes
 }
 
 function allocateBuffers() {
