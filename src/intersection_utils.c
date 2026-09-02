@@ -38,12 +38,10 @@ static void			ft_display_loading(t_rtv *rtv)
 	}
 }
 
-static void			*ft_ray_loop(void *data)
+void				ft_render_band(t_rtv *rtv)
 {
-	t_color	rgb;
-	t_rtv	*rtv;
+	t_color		rgb;
 
-	rtv = data;
 	rtv->column = rtv->render_y_offset;
 	while (rtv->column <= rtv->scene.height)
 	{
@@ -57,11 +55,19 @@ static void			*ft_ray_loop(void *data)
 			rtv->row += rtv->pixel_size;
 		}
 		rtv->column += rtv->pixel_size;
+#ifndef __EMSCRIPTEN__
 		ft_display_loading(rtv);
+#endif
 	}
+}
+
+static void			*ft_ray_loop(void *data)
+{
+	ft_render_band(data);
 	return (NULL);
 }
 
+#ifndef __EMSCRIPTEN__
 int					ft_ray_shooter(t_rtv *rtv)
 {
 	pthread_t	thread[NUM_THREAD];
@@ -81,3 +87,4 @@ int					ft_ray_shooter(t_rtv *rtv)
 	ft_update_offset(rtv);
 	return (0);
 }
+#endif

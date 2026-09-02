@@ -64,6 +64,7 @@ void					ft_change_lookat(int mouse_button,
 	}
 }
 
+#ifndef __EMSCRIPTEN__
 void					ft_toogle_dof(t_list_head *buttons, t_rtv *env)
 {
 	t_button *button;
@@ -73,3 +74,4 @@ void					ft_toogle_dof(t_list_head *buttons, t_rtv *env)
 			&env->options.depth_of_field, (t_coor){0, 120});
 	env->buttons.push(&env->buttons, button);
 }
+#endif

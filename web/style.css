@@ -1,0 +1,256 @@
+:root {
+  --bg: #101418;
+  --bg-panel: #171d24;
+  --bg-input: #0c1014;
+  --border: #2a333e;
+  --text: #d7dee6;
+  --text-dim: #8a96a3;
+  --accent: #4fd1c5;
+  --accent-dim: #2c6f68;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 18px 28px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: 2px;
+  font-weight: 800;
+}
+
+header .accent { color: var(--accent); }
+
+header .title p {
+  margin: 2px 0 0;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+header .meta {
+  display: flex;
+  gap: 18px;
+  align-items: baseline;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+header .meta a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+main {
+  display: flex;
+  gap: 20px;
+  padding: 20px 28px 32px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.stage {
+  flex: 1 1 620px;
+  min-width: 320px;
+}
+
+.canvas-wrap {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+}
+
+canvas#view {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 20, 24, 0.88);
+  transition: opacity 0.3s;
+}
+
+.overlay.hidden { opacity: 0; pointer-events: none; }
+
+.overlay p { color: var(--text-dim); font-size: 13px; margin: 0; }
+
+.spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid var(--accent-dim);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.statusbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+#status { min-width: 200px; }
+#status.error { color: #fc8181; }
+
+.progress {
+  flex: 1;
+  height: 4px;
+  background: var(--bg-input);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+#progress-fill {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  transition: width 0.15s ease;
+}
+
+.hint {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.8;
+}
+
+kbd {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 11px;
+  font-family: inherit;
+}
+
+.panel {
+  flex: 0 1 300px;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.group {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.group label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.group select {
+  width: 100%;
+  background: var(--bg-input);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 14px;
+  outline: none;
+}
+
+.group select:focus { border-color: var(--accent); }
+
+.row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.description {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.5;
+  min-height: 2.5em;
+}
+
+.toggles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 10px;
+}
+
+.toggles label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text);
+  text-transform: none;
+  letter-spacing: 0;
+  margin: 4px 0 0;
+  cursor: pointer;
+}
+
+.toggles input { accent-color: var(--accent); }
+
+.actions { display: flex; flex-direction: column; gap: 8px; }
+
+.actions button {
+  background: var(--bg-input);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.actions button:hover { border-color: var(--accent); color: var(--accent); }
+
+.panel footer p {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+  main { padding: 14px; }
+  .panel { flex: 1 1 100%; }
+  header { padding: 14px 16px 8px; }
+}

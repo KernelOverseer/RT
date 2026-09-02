@@ -1,0 +1,54 @@
+name: Deploy web build
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'src/**'
+      - 'inc/**'
+      - 'libs/**'
+      - 'rt-scenes/**'
+      - 'web/**'
+      - '.github/workflows/deploy-web.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: latest
+
+      - name: Build WebAssembly bundle
+        run: make -C web
+
+      - name: Smoke test (renders every bundled scene)
+        run: node web/smoke_test.js
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

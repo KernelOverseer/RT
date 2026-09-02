@@ -12,6 +12,7 @@
 
 #include "rtv1.h"
 
+#ifndef __EMSCRIPTEN__
 void		ft_clear_mlx(t_mlx *mlx, t_rtv *rtv)
 {
 	mlx_destroy_image(mlx->mlx_ptr, mlx->img.img_ptr);
@@ -19,9 +20,10 @@ void		ft_clear_mlx(t_mlx *mlx, t_rtv *rtv)
 	mlx->img.img_ptr =
 		mlx_new_image(mlx->mlx_ptr, rtv->scene.width, rtv->scene.height);
 	mlx->img.data =
-	(int*)mlx_get_data_addr(mlx->img.img_ptr, &mlx->img.bpp,
-			&mlx->img.size_l, &mlx->img.endian);
+		(int*)mlx_get_data_addr(mlx->img.img_ptr, &mlx->img.bpp,
+				&mlx->img.size_l, &mlx->img.endian);
 }
+#endif
 
 int			ft_exit(t_rtv *rtv)
 {

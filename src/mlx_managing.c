@@ -37,6 +37,7 @@ void		ft_put_pixel(t_rtv *rtv, int color)
 			(int)(rtv->column * rtv->scene.width + rtv->row)] = color;
 }
 
+#ifndef __EMSCRIPTEN__
 static int	ft_frame_loop(void *arg)
 {
 	t_rtv	*rtv;
@@ -57,6 +58,7 @@ static int	ft_frame_loop(void *arg)
 	ft_draw_buttons(rtv);
 	return (0);
 }
+#endif
 
 void		ft_init_rendrering(t_rtv *rtv)
 {
@@ -67,6 +69,7 @@ void		ft_init_rendrering(t_rtv *rtv)
 	rtv->actions.mouvement = 0;
 }
 
+#ifndef __EMSCRIPTEN__
 void		ft_init_win(t_rtv *rtv)
 {
 	ft_init_rendrering(rtv);
@@ -85,3 +88,4 @@ void		ft_init_win(t_rtv *rtv)
 	mlx_loop_hook(rtv->mlx.mlx_ptr, &ft_frame_loop, rtv);
 	mlx_loop(rtv->mlx.mlx_ptr);
 }
+#endif

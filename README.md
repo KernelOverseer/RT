@@ -6,6 +6,22 @@ A raytracing program built from scratch in C language, using MinilibX minimal gr
 
 > This project's main goal is learning raytracing from scratch, making a simple pseudo-xml parser expandable by design, and distributing computational tasks using C sockets to implement cluster rendering.
 
+## Run it in your browser
+
+The same C engine (reflection, refraction, soft shadows, procedural textures, all of it) is compiled to WebAssembly with Emscripten and rendered live by a pool of Web Workers — no rewrite, the engine source is shared between the native and web builds.
+
+➡️ **[Live demo](https://kerneloverseer.github.io/RT/)** — drag to look around, WASD to move, click to aim and set the depth-of-field focus, switch between 16 scenes from `rt-scenes/`, toggle shading options, apply filters, or download your frame as a BMP exactly like the native `--no_window` mode writes it.
+
+The web build lives in [`web/`](web/):
+
+```sh
+source ~/emsdk/emsdk_env.sh   # once: https://emscripten.org/docs/getting_started
+make -C web                   # builds web/dist/ and serves as static files
+make -C web test              # node smoke test: renders every bundled scene
+```
+
+GitHub Actions builds and publishes it on every push (`.github/workflows/deploy-web.yml`). Each Web Worker runs its own WASM instance and renders one vertical band of the image — the same band split the original pthread build used — so the pool needs no SharedArrayBuffer and works on GitHub Pages.
+
 ![a scene displaying the use of bump mapping to alter refraction](https://i.ibb.co/sjtxBYV/test2.png "a scene displaying the use of bump mapping to alter refraction")
 
 ## Features

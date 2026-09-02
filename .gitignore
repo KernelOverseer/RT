@@ -1,1 +1,11 @@
 *.tex
+obj/
+*.o
+rt
+slave_rt
+libs/libft/libft.a
+libs/ft_maths/libftmaths.a
+libs/ttslist/libttslist.a
+libs/ttslist/build/
+web/dist/
+.zcode/

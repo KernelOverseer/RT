@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RT — a C raytracer running in your browser</title>
+  <meta name="description" content="A raytracing engine written in C in 2020, compiled to WebAssembly and rendered by a pool of Web Workers — live in the browser.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23101418'/%3E%3Ccircle cx='13' cy='13' r='9' fill='none' stroke='%234fd1c5' stroke-width='3'/%3E%3Cpath d='M20 20 L27 27' stroke='%234fd1c5' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <script src="scenes.js" defer></script>
+  <script src="main.js" defer></script>
+</head>
+<body>
+  <header>
+    <div class="title">
+      <h1>RT<span class="accent">.</span></h1>
+      <p>a C raytracer, compiled to WebAssembly</p>
+    </div>
+    <div class="meta">
+      <span id="worker-count">spawning workers…</span>
+      <a href="https://github.com/KernelOverseer/RT" target="_blank" rel="noopener">source ↗</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="stage">
+      <div class="canvas-wrap">
+        <canvas id="view" width="854" height="480"></canvas>
+        <div id="loading-overlay" class="overlay">
+          <div class="spinner"></div>
+          <p>compiling the engine…</p>
+        </div>
+      </div>
+      <div class="statusbar">
+        <span id="status">booting…</span>
+        <div class="progress"><div id="progress-fill"></div></div>
+      </div>
+      <p class="hint">
+        drag = look around · click = aim &amp; focus ·
+        <kbd>W</kbd><kbd>S</kbd> move · <kbd>A</kbd><kbd>D</kbd> / <kbd>←</kbd><kbd>→</kbd> turn ·
+        <kbd>↑</kbd><kbd>↓</kbd> pitch · <kbd>Q</kbd><kbd>E</kbd> strafe ·
+        <kbd>R</kbd><kbd>T</kbd> focus distance
+      </p>
+    </section>
+
+    <aside class="panel">
+      <div class="group">
+        <label for="scene-select">Scene</label>
+        <select id="scene-select"></select>
+        <p id="scene-description" class="description"></p>
+      </div>
+
+      <div class="group row2">
+        <div>
+          <label for="quality-select">Quality</label>
+          <select id="quality-select">
+            <option value="draft">Draft</option>
+            <option value="normal" selected>Normal</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+        <div>
+          <label for="resolution-select">Resolution</label>
+          <select id="resolution-select">
+            <option value="360">360p</option>
+            <option value="480" selected>480p</option>
+            <option value="540">540p</option>
+            <option value="720">720p</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="group">
+        <label>Shading</label>
+        <div id="toggles" class="toggles"></div>
+      </div>
+
+      <div class="group row2">
+        <div>
+          <label for="filter-select">Filter</label>
+          <select id="filter-select">
+            <option value="0" selected>none</option>
+            <option value="1">grayscale</option>
+            <option value="2">sepia</option>
+            <option value="3">negative</option>
+          </select>
+        </div>
+        <div>
+          <label for="effect-select">Post effect</label>
+          <select id="effect-select">
+            <option value="0" selected>none</option>
+            <option value="1">motion blur</option>
+            <option value="2">blur</option>
+            <option value="3">sharpen</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="group actions">
+        <button id="stereo-button">3D anaglyph</button>
+        <button id="save-button">Download BMP</button>
+        <button id="reset-button">Reset camera</button>
+      </div>
+
+      <footer>
+        <p>The original engine (2020, 42 school project) renders every pixel
+        in C — reflection, refraction, soft shadows, procedural textures —
+        compiled here unmodified with Emscripten, one WASM instance per
+        Web Worker.</p>
+      </footer>
+    </aside>
+  </main>
+</body>
+</html>

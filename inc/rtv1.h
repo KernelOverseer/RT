@@ -456,6 +456,7 @@ void					ft_create_ray(t_rtv *rtv, int sample);
 void					ft_map_coordinates(t_rtv *rtv);
 int						ft_shoot_stero(t_rtv *rtv);
 int						ft_ray_shooter(t_rtv *rtv);
+void					ft_render_band(t_rtv *rtv);
 void					ft_update_offset(t_rtv *rtv);
 void					ft_intersection_position(t_cam *cam,
 	double first_intersection);

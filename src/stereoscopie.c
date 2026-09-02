@@ -45,6 +45,7 @@ int			*ft_add_images(int *image1, int *image2, t_rtv rtv)
 	return (image1);
 }
 
+#ifndef __EMSCRIPTEN__
 int			ft_shoot_stero(t_rtv *rtv)
 {
 	t_cam	cam_clone;
@@ -72,3 +73,4 @@ int			ft_shoot_stero(t_rtv *rtv)
 	rtv->scene.filter = 0;
 	return (0);
 }
+#endif
