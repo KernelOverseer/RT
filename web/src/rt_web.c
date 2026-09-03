@@ -310,30 +310,48 @@ void	rt_web_render_band(int index, int count)
 ** RTBench-style tile render for the benchmark page: renders tile `index`
 ** of a tiles_x * tiles_y grid at full resolution into the shared buffer.
 ** Edge tiles are clamped so uneven divisions cover the frame exactly.
+** rt_web_render_tile_rows renders a slice of rows [row_from,
+ * row_from + row_count) so the JS side can stream a live preview row by
+** row, the way the native RTBench pushed pixels to the window as they
+** were generated.
 */
 
-EMSCRIPTEN_KEEPALIVE
-void	rt_web_render_tile(int index, int tiles_x, int tiles_y)
+static void	rt_web_tile_rect(int index, int tiles_x, int tiles_y,
+			int *x0, int *y0, int *x1, int *y1)
 {
-	t_color	rgb;
 	int		tile_w;
 	int		tile_h;
-	int		x0;
-	int		y0;
-	int		x1;
-	int		y1;
 
 	tile_w = g_rtv.scene.width / tiles_x;
 	tile_h = g_rtv.scene.height / tiles_y;
-	x0 = (index % tiles_x) * tile_w;
-	y0 = (index / tiles_x) * tile_h;
-	x1 = (index % tiles_x == tiles_x - 1) ? g_rtv.scene.width : x0 + tile_w;
-	y1 = (index / tiles_x == tiles_y - 1) ? g_rtv.scene.height : y0 + tile_h;
-	g_rtv.column = y0;
-	while (g_rtv.column < y1)
+	*x0 = (index % tiles_x) * tile_w;
+	*y0 = (index / tiles_x) * tile_h;
+	*x1 = (index % tiles_x == tiles_x - 1) ? g_rtv.scene.width : *x0 + tile_w;
+	*y1 = (index / tiles_x == tiles_y - 1) ? g_rtv.scene.height : *y0 + tile_h;
+}
+
+EMSCRIPTEN_KEEPALIVE
+void	rt_web_render_tile_rows(int index, int tiles_x, int tiles_y,
+			int row_from, int row_count)
+{
+	t_color	rgb;
+	int		rect[4];
+	int		y;
+	int		y_end;
+
+	rt_web_tile_rect(index, tiles_x, tiles_y,
+		&rect[0], &rect[1], &rect[2], &rect[3]);
+	y = rect[1] + row_from;
+	y_end = rect[1] + row_from + row_count;
+	if (y < rect[1])
+		y = rect[1];
+	if (y_end > rect[3])
+		y_end = rect[3];
+	while (y < y_end)
 	{
-		g_rtv.row = x0;
-		while (g_rtv.row < x1)
+		g_rtv.column = y;
+		g_rtv.row = rect[0];
+		while (g_rtv.row < rect[2])
 		{
 			rgb = (t_color){0, 0, 0};
 			if (g_rtv.scene.dof && g_rtv.options.depth_of_field)
@@ -341,8 +359,20 @@ void	rt_web_render_tile(int index, int tiles_x, int tiles_y)
 			ft_color_best_node(&g_rtv, rgb);
 			g_rtv.row++;
 		}
-		g_rtv.column++;
+		y++;
 	}
+}
+
+EMSCRIPTEN_KEEPALIVE
+void	rt_web_render_tile(int index, int tiles_x, int tiles_y)
+{
+	int		x0;
+	int		y0;
+	int		x1;
+	int		y1;
+
+	rt_web_tile_rect(index, tiles_x, tiles_y, &x0, &y0, &x1, &y1);
+	rt_web_render_tile_rows(index, tiles_x, tiles_y, 0, y1 - y0);
 }
 
 /*

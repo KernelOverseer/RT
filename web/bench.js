@@ -13,7 +13,8 @@
 
 const TILES_X = 32;
 const TILES_Y = 20;
-const MAX_WORKERS = Math.min(8, Math.max(1, (navigator.hardwareConcurrency || 4)));
+const MAX_WORKERS = 32;
+const DEFAULT_WORKERS = Math.min(8, Math.max(1, (navigator.hardwareConcurrency || 4) - 1));
 
 const BENCH_SCENES = [
   {
@@ -79,6 +80,8 @@ function post(worker, msg) {
 function onWorkerMessage(msg) {
   if (msg.type === 'ready') {
     state.ready++;
+    document.getElementById('worker-count').textContent =
+      'spawning workers… ' + state.ready + '/' + state.workers.length;
     if (state.ready === state.workers.length) onAllReady();
     return;
   }
@@ -96,8 +99,6 @@ function onWorkerMessage(msg) {
 }
 
 async function onAllReady() {
-  document.getElementById('worker-count').textContent =
-    state.workers.length + (state.workers.length > 1 ? ' workers' : ' worker');
   const workersSelect = document.getElementById('workers-select');
   for (let i = 1; i <= state.workers.length; i++) {
     const opt = document.createElement('option');
@@ -105,7 +106,10 @@ async function onAllReady() {
     opt.textContent = i;
     workersSelect.appendChild(opt);
   }
-  workersSelect.value = state.workers.length;
+  state.workerCount = DEFAULT_WORKERS;
+  workersSelect.value = DEFAULT_WORKERS;
+  document.getElementById('worker-count').textContent =
+    state.workers.length + ' workers ready';
   await loadScene(BENCH_SCENES[0]);
   setStatus('ready — hit “Run benchmark”');
 }
@@ -177,15 +181,19 @@ function runBenchmark(warmup) {
 
 function onTile(msg) {
   if (!state.running) return;
-  const tile = new Uint32Array(msg.pixels);
-  const w = msg.width;
-  let k = 0;
-  for (let y = msg.y0; y < msg.y1; y++)
-    for (let x = msg.x0; x < msg.x1; x++)
-      state.image[y * w + x] = tile[k++];
+  const w = state.sceneInfo.width;
+  const row = new Uint32Array(msg.pixels);
+
+  // every message carries one freshly rendered scanline of the tile:
+  // show it immediately, exactly like the native bench's live preview
+  for (let x = 0; x < row.length; x++)
+    state.image[msg.rowY * w + msg.x0 + x] = row[x];
+  blitRect(msg.x0, msg.rowY, msg.x1, msg.rowY + 1);
+
+  if (!msg.done) return;
+
   drawTileBorder(msg);
   blitRect(msg.x0, msg.y0, msg.x1, msg.y1);
-
   state.inFlight--;
   state.tilesDone++;
   state.tileTimes.push(msg.ms);
@@ -210,16 +218,30 @@ function dispatchNext() {
 }
 
 function drawTileBorder(msg) {
-  // RTBench's magenta tile outlines, engine pixel order (symmetric in R/B)
-  const w = msg.width;
+  // subtle completion mark: one blended teal pixel ring, engine order
+  // (0x4FD1C5 displayed -> BGR int 0xC5D14F), mixed 50/50 with the
+  // rendered pixel so it reads as a grid hint instead of a highlighter
+  const w = state.sceneInfo.width;
+  const h = state.sceneInfo.height;
   const img = state.image;
-  for (let x = msg.x0; x < msg.x1; x++) {
-    img[msg.y0 * w + x] = 0xff00ff;
-    img[(msg.y1 - 1) * w + x] = 0xff00ff;
+  const blend = (i) => {
+    const v = img[i] & 0xffffff;
+    img[i] = 0xff000000 |
+      ((((v >> 16) & 0xff) + 0x4f) >> 1) << 16 |
+      ((((v >> 8) & 0xff) + 0xd1) >> 1) << 8 |
+      (((v & 0xff) + 0xc5) >> 1);
+  };
+  const y0 = msg.y0;
+  const y1 = Math.min(msg.y1, h);
+  const x0 = msg.x0;
+  const x1 = Math.min(msg.x1, w);
+  for (let x = x0; x < x1; x++) {
+    blend(y0 * w + x);
+    if (y1 - 1 > y0) blend((y1 - 1) * w + x);
   }
-  for (let y = msg.y0; y < msg.y1; y++) {
-    img[y * w + msg.x0] = 0xff00ff;
-    img[y * w + msg.x1 - 1] = 0xff00ff;
+  for (let y = y0; y < y1; y++) {
+    blend(y * w + x0);
+    if (x1 - 1 > x0) blend(y * w + x1 - 1);
   }
 }
 

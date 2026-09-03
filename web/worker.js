@@ -99,9 +99,7 @@ function handle(msg) {
         mod._rt_web_set_dof_focus(msg.dofFocus || 30);
         mod._rt_web_set_filter(msg.filter || 0);
         mod._rt_web_begin_pass(1, 0, msg.pass.aa);
-        const t0 = performance.now();
-        mod._rt_web_render_tile(msg.tile, msg.tilesX, msg.tilesY);
-        const tileMs = performance.now() - t0;
+
         const w = mod._rt_web_scene_width();
         const h = mod._rt_web_scene_height();
         const tileW = Math.floor(w / msg.tilesX);
@@ -110,23 +108,29 @@ function handle(msg) {
         const y0 = Math.floor(msg.tile / msg.tilesX) * tileH;
         const x1 = (msg.tile % msg.tilesX === msg.tilesX - 1) ? w : x0 + tileW;
         const y1 = (Math.floor(msg.tile / msg.tilesX) === msg.tilesY - 1) ? h : y0 + tileH;
-        const pixels = new Uint32Array(mod.HEAPU8.buffer, mod._rt_web_pixels(), w * h);
-        const tile = new Uint32Array((x1 - x0) * (y1 - y0));
-        let k = 0;
-        for (let y = y0; y < y1; y++)
-          for (let x = x0; x < x1; x++)
-            tile[k++] = pixels[y * w + x];
-        self.postMessage({
-          type: 'bench-tile',
-          id: msg.id,
-          tile: msg.tile,
-          x0, y0, x1, y1,
-          width: w,
-          height: h,
-          aa: msg.pass.aa,
-          ms: tileMs,
-          pixels: tile.buffer,
-        }, [tile.buffer]);
+
+        // stream one row at a time so the page shows pixels as they are
+        // generated, like the native bench pushing scanlines to the window;
+        // only the C render time is charged to the tile's timing
+        let renderMs = 0;
+        for (let row = 0; row < y1 - y0; row++) {
+          const t0 = performance.now();
+          mod._rt_web_render_tile_rows(msg.tile, msg.tilesX, msg.tilesY, row, 1);
+          renderMs += performance.now() - t0;
+          const pixels = new Uint32Array(mod.HEAPU8.buffer, mod._rt_web_pixels(), w * h);
+          const line = new Uint32Array(x1 - x0);
+          line.set(pixels.subarray((y0 + row) * w + x0, (y0 + row) * w + x1));
+          self.postMessage({
+            type: 'bench-tile',
+            id: msg.id,
+            tile: msg.tile,
+            x0, y0, x1, y1,
+            rowY: y0 + row,
+            done: row === y1 - y0 - 1,
+            ms: renderMs,
+            pixels: line.buffer,
+          }, [line.buffer]);
+        }
         return;
       }
       case 'raycast': {
