@@ -1,9 +1,27 @@
 /*
 ** node smoke test for the wasm build (also validates the scene catalog):
-**   node smoke_test.js
-** loads every scene in dist/scenes, renders one coarse pass and reports
-** scene dimensions, render time and how many pixels got colored.
+**   node smoke_test.js            -> fast CI subset (~30s locally)
+**   node smoke_test.js all        -> every bundled scene (~5 min locally)
+**   node smoke_test.js a.xml b... -> explicit scenes
+** loads each scene, renders one coarse pass and reports scene dimensions,
+** render time and how many pixels got colored.
+**
+** FAST_SCENES keeps one scene per engine path, all comfortably under 10s:
+** the heavy ones (bench_cat, forest, mirror_room, refraction_gallery,
+** ring_study, cubics, bench_mandelbulb) only run with `all`.
 */
+
+const FAST_SCENES = [
+  'rgb_studio.xml',            // multi-light mixing, glass + mirror spheres
+  'complex_objects.xml',       // hyperboloids, paraboloids, holo-cubes, pills
+  'perturbation.xml',          // procedural textures + bump mapping
+  'planet_rise.xml',           // parallel light, torus, pastel/marble maps
+  'parallel_light.xml',        // directional light + reflective floor
+  'mandelbulb.xml',            // fractal ray marching
+  'reflection_tranparency.xml',// refraction/transparency depth
+  'depth_of_field.xml',        // DOF sampling
+  'demo.xml',                  // the canonical multi-primitive scene
+];
 
 const fs = require('fs');
 const path = require('path');
@@ -42,8 +60,16 @@ async function main() {
   mod._rt_web_init();
 
   const scenesDir = path.join(__dirname, 'dist', 'scenes');
-  const scenes = fs.readdirSync(scenesDir).filter((f) => f.endsWith('.xml'));
-  scenes.sort();
+  const available = fs.readdirSync(scenesDir).filter((f) => f.endsWith('.xml')).sort();
+  const args = process.argv.slice(2);
+  const scenes = args.includes('all') ? available
+    : args.length ? args
+    : FAST_SCENES;
+  const missing = scenes.filter((s) => !available.includes(s));
+  if (missing.length) {
+    console.error('not in dist/scenes:', missing.join(', '));
+    process.exit(1);
+  }
 
   let good = 0;
   for (const scene of scenes) {
@@ -62,8 +88,9 @@ async function main() {
       result.w ? `${result.w}x${result.h}  ${result.nonZero}/${result.w * result.h} px  ${result.ms}ms` : ''
     );
   }
-  console.log(`\n${good}/${scenes.length} scenes render`);
-  process.exit(good === 0 ? 1 : 0);
+  console.log(`\n${good}/${scenes.length} scenes render` +
+    (scenes.length === available.length ? '' : ` (${available.length} total, run 'node smoke_test.js all' for every scene)`));
+  process.exit(good === scenes.length ? 0 : 1);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

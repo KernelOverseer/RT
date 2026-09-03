@@ -72,8 +72,13 @@ stage:
 	@sed -i -E 's/(src|href)="([^"?]+\.js)"/\1="\2?v=$(VERSION)"/; s/(src|href)="([^"?]+\.css)"/\1="\2?v=$(VERSION)"/' dist/bench.html
 	@echo "web build ready in web/dist/ (version $(VERSION))"
 
+# fast subset (~30s): one scene per engine path, all under 10s each;
+# `make test-full` runs every bundled scene (~5 min)
 test: all
 	node smoke_test.js
+
+test-full: all
+	node smoke_test.js all
 
 clean:
 	rm -rf dist
